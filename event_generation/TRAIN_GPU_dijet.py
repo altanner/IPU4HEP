@@ -180,5 +180,6 @@ for epoch in range(10):
 
     with tqdm(total=None, file=sys.stdout, unit="its") as pbar:
         for images in train_dataset:
-             gen_loss, disc_loss = train_step(images)
-             pbar.update(1)
+            gen_loss, disc_loss = train_step(images)
+            pbar.update(1)
+
