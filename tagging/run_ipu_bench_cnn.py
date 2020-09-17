@@ -32,7 +32,7 @@ for b in tqdm(batch_sizes):
                 for k1 in conv_k1:
                     for k2 in conv_k2:
 
-                        name = f'{b}-{l}-{f}-{h}-{k1}-{k2}'
+                        name = f"{b}-{l}-{f}-{h}-{k1}-{k2}"
 
                         if ipu:
 
@@ -67,6 +67,9 @@ for b in tqdm(batch_sizes):
 
                             timingsGPU[name] = resultGPU
 
-if cpu: json.dump(timingsCPU, open("param_bench_cnn_cpu.json", "w"))
-if ipu: json.dump(timingsIPU, open("param_bench_cnn_ipu.json", "w"))
-if gpu: json.dump(timingsGPU, open("param_bench_cnn_gpu.json", "w"))
+if cpu:
+    json.dump(timingsCPU, open("param_bench_cnn_cpu.json", "w"))
+if ipu:
+    json.dump(timingsIPU, open("param_bench_cnn_ipu.json", "w"))
+if gpu:
+    json.dump(timingsGPU, open("param_bench_cnn_gpu.json", "w"))

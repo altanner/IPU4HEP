@@ -19,7 +19,7 @@ timingsGPUNoSkip = {}
 
 for b in batch_sizes:
 
-    name = f'{b}'
+    name = f"{b}"
 
     commandGPU = f"python kfTFVec.py -n {b}"
     commandGPUNoSkip = f"python kfTFVecNoSkip.py -n {b}"
@@ -33,7 +33,7 @@ for b in batch_sizes:
         resultGPU = float(str(resultGPU, "utf-8").strip("\n"))
         tot += resultGPU
 
-    timingsGPU[name] = tot/10.
+    timingsGPU[name] = tot / 10.0
 
     commandGPU = f"python kfTFVec.py -n {b}"
 
@@ -46,7 +46,7 @@ for b in batch_sizes:
         resultGPU = float(str(resultGPU, "utf-8").strip("\n"))
         tot += resultGPU
 
-    timingsGPUNoSkip[name] = tot/10.
+    timingsGPUNoSkip[name] = tot / 10.0
 
 json.dump(timingsGPU, open("kf_bench_tf_skip_gpu.json", "w"))
 json.dump(timingsGPUNoSkip, open("kf_bench_tf_noSkip_gpu.json", "w"))

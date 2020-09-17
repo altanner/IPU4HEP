@@ -28,11 +28,13 @@ for b in batch_sizes:
         for f in tqdm(input_features):
             for h in hidden_size:
 
-                name = f'{b}-{l}-{f}-{h}'
+                name = f"{b}-{l}-{f}-{h}"
 
                 if ipu:
 
-                    commandIPU = f"python rnn_model_bench.py -n {b} -t {l} -s {h} -f {f}"
+                    commandIPU = (
+                        f"python rnn_model_bench.py -n {b} -t {l} -s {h} -f {f}"
+                    )
                     try:
                         resultIPU = sp.check_output(commandIPU, shell=True)
                         resultIPU = float(str(resultIPU, "utf-8").strip("\n"))
@@ -43,7 +45,9 @@ for b in batch_sizes:
 
                 if cpu:
 
-                    commandCPU = f"python rnn_model_bench.py -n {b} -t {l} -s {h} -f {f} -c"
+                    commandCPU = (
+                        f"python rnn_model_bench.py -n {b} -t {l} -s {h} -f {f} -c"
+                    )
                     resultCPU = sp.check_output(commandCPU, shell=True)
                     resultCPU = float(str(resultCPU, "utf-8").strip("\n"))
 
@@ -51,12 +55,17 @@ for b in batch_sizes:
 
                 if gpu:
 
-                    commandGPU = f"python rnn_model_bench.py -n {b} -t {l} -s {h} -f {f} -g"
+                    commandGPU = (
+                        f"python rnn_model_bench.py -n {b} -t {l} -s {h} -f {f} -g"
+                    )
                     resultGPU = sp.check_output(commandGPU, shell=True)
                     resultGPU = float(str(resultGPU, "utf-8").strip("\n"))
 
                     timingsGPU[name] = resultGPU
 
-if cpu: json.dump(timingsCPU, open("model_size_bench_rnn_cpu.json", "w"))
-if ipu: json.dump(timingsIPU, open("param_bench_rnn_ipu.json", "w"))
-if gpu: json.dump(timingsGPU, open("param_bench_rnn_gpu.json", "w"))
+if cpu:
+    json.dump(timingsCPU, open("model_size_bench_rnn_cpu.json", "w"))
+if ipu:
+    json.dump(timingsIPU, open("param_bench_rnn_ipu.json", "w"))
+if gpu:
+    json.dump(timingsGPU, open("param_bench_rnn_gpu.json", "w"))
