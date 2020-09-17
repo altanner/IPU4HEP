@@ -24,6 +24,7 @@ from tensorflow.keras.layers import (
     BatchNormalization,
     LeakyReLU
 )
+
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import Model, Sequential
 from tensorflow.compat.v1.keras.layers import UpSampling2D #! pylint hates this
