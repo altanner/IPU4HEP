@@ -135,7 +135,13 @@ def _loss_generator(y_true, y_pred):
 
 
 @tf.function
-def train_step(images):
+def train_step(
+    images,
+    Generator,
+    Discriminator,
+    gen_optimizer,
+    disc_optimizer):
+
     noise = tf.random.normal([batch_size, 128])
     noise_stacked = tf.random.normal((int(batch_size * 2), 128), 0, 1)
 
@@ -170,17 +176,29 @@ def train_step(images):
 
 
 #!!! RUN THINGS
-train_dataset = assemble_training_dataset(batch_size)
-Generator = build_generator()
-Discriminator = build_discriminator()
-optimizer_stacked, optimizer_D, gen_optimizer, disc_optimizer = assign_optimizers()
+def main():
+    train_dataset = assemble_training_dataset(batch_size)
+    Generator = build_generator()
+    Discriminator = build_discriminator()
+    optimizer_stacked, optimizer_D, gen_optimizer, disc_optimizer = assign_optimizers()
 
-for epoch in range(10):
+    for epoch in range(10):
 
-    print(f"Epoch {epoch}")
+        print(f"Epoch {epoch}")
 
-    with tqdm(total=None, file=sys.stdout, unit="its") as pbar:
-        for images in train_dataset:
-            gen_loss, disc_loss = train_step(images)
-            pbar.update(1)
+        with tqdm(total=None, file=sys.stdout, unit="its") as pbar:
 
+            for images in train_dataset:
+
+                gen_loss, disc_loss = train_step(
+                    images,
+                    Generator,
+                    Discriminator,
+                    gen_optimizer,
+                    disc_optimizer)
+
+                pbar.update(1)
+
+
+if __name__ == "__main__":
+    main()
