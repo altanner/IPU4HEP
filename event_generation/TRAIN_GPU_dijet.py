@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 import tensorflow as tf
 from tensorflow.keras.layers import (
-    Input,
+    Input, #? do we need all of these?
     Flatten,
     Dense,
     Reshape,
@@ -28,11 +28,11 @@ from tensorflow.keras.layers import (
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import Model, Sequential
 from tensorflow.compat.v1.keras.layers import UpSampling2D #! pylint hates this
-# tf.disable_v2_behavior()
+# tf.disable_v2_behavior() #! can be discarded I guess?
 print(f"Using Tensorflow version {tf.__version__}")
 
 
-_EPSILON = K.epsilon()
+_EPSILON = K.epsilon() # TODO should these be args?
 batch_size = 128 #? will this always be the same as the GAN_noise_size?
 GAN_noise_size = 128
 GAN_output_size = 7
@@ -57,7 +57,7 @@ def build_generator():
 
     """
     Build the network layers of the generator model.
-
+    # TODO comprehensive docstring
     Returns the model as "Generator".
     """
 
@@ -85,7 +85,7 @@ def build_discriminator():
 
     """
     Build the network layers of the discriminator model.
-
+    # TODO comprehensive docstring
     Returns the model as "Discriminator".
     """
 
@@ -109,7 +109,11 @@ def build_discriminator():
 
 
 def assign_optimizers():
-
+    
+    """
+    # TODO docstring
+    """
+    
     optimizer_stacked = tf.compat.v1.train.AdamOptimizer(
         learning_rate=0.001,
         beta1=0.9,
@@ -127,7 +131,11 @@ def assign_optimizers():
 
 
 def _loss_generator(y_true, y_pred):
-
+    
+    """
+    # TODO docstring
+    """
+    
     y_pred = K.clip(y_pred, _EPSILON, 1.0 - _EPSILON)
     out = -(K.log(y_pred)) #! pylint hates this (why does it still work?)
 
@@ -142,6 +150,10 @@ def train_step(
     gen_optimizer,
     disc_optimizer):
 
+    """
+    # TODO docstring
+    """
+    
     noise = tf.random.normal([batch_size, 128])
     noise_stacked = tf.random.normal((int(batch_size * 2), 128), 0, 1)
 
