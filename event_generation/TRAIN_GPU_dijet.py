@@ -5,41 +5,44 @@ import argparse
 from tqdm import tqdm
 
 import tensorflow as tf
+from tensorflow.keras import backend as K
 from tensorflow.keras.layers import (
-    Input, #? do we need all of these?
+    Input,
     Flatten,
     Dense,
     Reshape,
     Dropout,
-    Embedding,
-    Multiply,
+    Embedding, #! unused
+    Multiply, #! unused
     Activation,
     Conv2D,
-    ZeroPadding2D,
-    LocallyConnected2D,
-    Concatenate,
-    GRU,
-    Lambda,
+    ZeroPadding2D, #! unused
+    LocallyConnected2D, #! unused
+    Concatenate, #! unused
+    GRU, #! unused
+    Lambda, #! unused
     Conv2DTranspose,
     BatchNormalization,
     LeakyReLU
 )
-
-from tensorflow.keras import backend as K
-from tensorflow.keras.models import Model, Sequential
-from tensorflow.compat.v1.keras.layers import UpSampling2D #! pylint hates this
+from tensorflow.keras.models import Model, Sequential #! Sequential is unused
+from tensorflow.compat.v1.keras.layers import UpSampling2D #! pylint hates this, unused
 # tf.disable_v2_behavior() #! can be discarded I guess?
 print(f"Using Tensorflow version {tf.__version__}")
 
 
-_EPSILON = K.epsilon() # TODO should these be args?
-batch_size = 128 #? will this always be the same as the GAN_noise_size?
+_EPSILON = K.epsilon() #todo should these be args?
+batch_size = 128 #! will this always be the same as the GAN_noise_size?
 GAN_noise_size = 128
 GAN_output_size = 7
 #! regression problem, not classification problem
 
 
 def assemble_training_dataset(batch_size):
+
+    """
+    #todo docstring
+    """
 
     #! train targets = normal dist mean = 0, variance = 1, 60000 samples, 7 dimensions
     train_images = np.random.normal(0, 1, (60000, 7)) #!was 60000
@@ -57,7 +60,7 @@ def build_generator():
 
     """
     Build the network layers of the generator model.
-    # TODO comprehensive docstring
+    #todo docstring
     Returns the model as "Generator".
     """
 
@@ -72,11 +75,10 @@ def build_generator():
     G = Conv2DTranspose(16, kernel_size=3, strides=1, padding="same")(G)
     G = LeakyReLU(alpha=0.2)(G)
     G = BatchNormalization()(G)
-    G = Flatten()(G)
+    G = Flatten()(G) #! justify this model
     G_output = Dense(GAN_output_size)(G)
     G_output = Activation("tanh")(G_output) #! hyperbolic tangent
     Generator = Model(G_input, G_output)
-    Generator.summary()
 
     return Generator
 
@@ -85,7 +87,7 @@ def build_discriminator():
 
     """
     Build the network layers of the discriminator model.
-    # TODO comprehensive docstring
+    #todo comprehensive docstring
     Returns the model as "Discriminator".
     """
 
@@ -100,42 +102,44 @@ def build_discriminator():
     D = LeakyReLU(alpha=0.2)(D)
     D = Flatten()(D)
     D = LeakyReLU(alpha=0.2)(D)
-    D = Dropout(0.2)(D)
+    D = Dropout(0.2)(D) #! justify this model
     D_output = Dense(1, activation="sigmoid")(D)
     Discriminator = Model(D_input, D_output)
-    Discriminator.summary()
 
     return Discriminator
 
 
 def assign_optimizers():
-    
-    """
-    # TODO docstring
-    """
-    
-    optimizer_stacked = tf.compat.v1.train.AdamOptimizer(
-        learning_rate=0.001,
-        beta1=0.9,
-        beta2=0.999,
-        epsilon=1e-08
-    )
 
-    optimizer_D = optimizer_stacked #! this was duplicated in OG
+    """
+    #todo docstring
+    #? although is is this func redundant?
+    """
+
+    #! optimizer_stacked and optimizer_D (identical) are unused.
+    # optimizer_stacked = tf.compat.v1.train.AdamOptimizer(
+    #     learning_rate=0.001,
+    #     beta1=0.9,
+    #     beta2=0.999,
+    #     epsilon=1e-08
+    # )
+
+#    optimizer_D = optimizer_stacked #! this was duplicated in OG
 
     gen_optimizer = tf.keras.optimizers.Adam(0.0002)
 
     disc_optimizer = gen_optimizer #! this was duplicated in OG
 
-    return optimizer_stacked, optimizer_D, gen_optimizer, disc_optimizer
+   # return optimizer_stacked, optimizer_D, gen_optimizer, disc_optimizer
+    return gen_optimizer, disc_optimizer
 
 
 def _loss_generator(y_true, y_pred):
-    
+
     """
-    # TODO docstring
+    #todo docstring
     """
-    
+
     y_pred = K.clip(y_pred, _EPSILON, 1.0 - _EPSILON)
     out = -(K.log(y_pred)) #! pylint hates this (why does it still work?)
 
@@ -151,9 +155,9 @@ def train_step(
     disc_optimizer):
 
     """
-    # TODO docstring
+    #todo docstring
     """
-    
+
     noise = tf.random.normal([batch_size, 128])
     noise_stacked = tf.random.normal((int(batch_size * 2), 128), 0, 1)
 
@@ -191,9 +195,15 @@ def main():
 
     # see docstrings :)
     train_dataset = assemble_training_dataset(batch_size)
+
     Generator = build_generator()
+    Generator.summary()
+
     Discriminator = build_discriminator()
-    optimizer_stacked, optimizer_D, gen_optimizer, disc_optimizer = assign_optimizers()
+    Discriminator.summary()
+
+#    optimizer_stacked, optimizer_D, gen_optimizer, disc_optimizer = assign_optimizers()
+    gen_optimizer, disc_optimizer = assign_optimizers()
 
     # run loop
     for epoch in range(10):
@@ -210,9 +220,9 @@ def main():
                     Discriminator,
                     gen_optimizer,
                     disc_optimizer)
-                # TODO: report losses etc
+                #todo report losses etc
                 pbar.update(1)
-    # TODO output model, benchmark
+    #todo output model, benchmark, logging
 
 
 if __name__ == "__main__":
