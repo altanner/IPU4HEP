@@ -33,19 +33,20 @@ print(f"Using Tensorflow version {tf.__version__}")
 
 _EPSILON = K.epsilon() #todo should these be args?
 batch_size = 128 #! will this always be the same as the GAN_noise_size?
+samples = 60000
 GAN_noise_size = 128
 GAN_output_size = 7
 #! regression problem, not classification problem
 
 
-def assemble_training_dataset(batch_size):
+def assemble_training_dataset(batch_size, samples):
 
     """
     #todo docstring
     """
 
     #! train targets = normal dist mean = 0, variance = 1, 60000 samples, 7 dimensions
-    train_images = np.random.normal(0, 1, (60000, 7)) #!was 60000
+    train_images = np.random.normal(0, 1, (samples, 7))
     train_images = train_images.reshape(train_images.shape[0], 7).astype("float32")
     train_dataset = (
         tf.data.Dataset.from_tensor_slices(train_images)
@@ -194,7 +195,7 @@ def train_step(
 def main():
 
     # see docstrings :)
-    train_dataset = assemble_training_dataset(batch_size)
+    train_dataset = assemble_training_dataset(batch_size, samples)
 
     Generator = build_generator()
     Generator.summary()
@@ -210,7 +211,10 @@ def main():
 
         print(f"Epoch {epoch}")
 
-        with tqdm(total=None, file=sys.stdout, unit="its") as pbar:
+        with tqdm(total=int(samples / batch_size),
+                  file=sys.stdout,
+                  ncols=64,
+                  unit="its") as pbar:
 
             for images in train_dataset:
 
