@@ -175,13 +175,15 @@ def train_step(
     return loss_stacked, loss_D
 
 
-#!!! RUN THINGS
 def main():
+
+    # see docstrings :)
     train_dataset = assemble_training_dataset(batch_size)
     Generator = build_generator()
     Discriminator = build_discriminator()
     optimizer_stacked, optimizer_D, gen_optimizer, disc_optimizer = assign_optimizers()
 
+    # run loop
     for epoch in range(10):
 
         print(f"Epoch {epoch}")
@@ -196,8 +198,9 @@ def main():
                     Discriminator,
                     gen_optimizer,
                     disc_optimizer)
-
+                # TODO: report losses etc
                 pbar.update(1)
+    # TODO output model, benchmark
 
 
 if __name__ == "__main__":
